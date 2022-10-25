@@ -160,9 +160,7 @@ namespace ParseFormuls
 
             VX vx = new VX(new List<double>(), new List<double>(), new List<double>(), new List<bool>());
             vx.isFixedVx.Add(false);
-            double esp = 0.01; //TODO некоторые задачи из-за этого прикола решаются неправильно (Сваливаются в локальные экстремумы или программа уходит в бесконечный цикл)
-            if (SymbolBox == 1)
-                esp = 0.01;
+            double esp = 0.01;
             while (FindP(vx) == 0)
             {
                 vx.X1.Clear();
@@ -184,7 +182,6 @@ namespace ParseFormuls
                     }
                     
                     double tmp = CalculateF(SecondKindConstraint, vx.X1[j], vx.X2[j]);
-                  //  System.Windows.MessageBox.Show(vx.X1[j].ToString() + " " + vx.X2[j].ToString() + " " + tmp);
                     if (SymbolBox == 0)
                     {
                         if (tmp <= X1X2) // ограничение второго рода
@@ -263,7 +260,7 @@ namespace ParseFormuls
                             {
                                 vx.X2[i] = 0.5 * (vx.X2[i] + ((1 / P) * SumAllFixedVxs(vx, j)));
                             }
-                            double tmp = CalculateF(SecondKindConstraint, vx.X1[j], vx.X2[j]); ///////////////
+                            double tmp = CalculateF(SecondKindConstraint, vx.X1[j], vx.X2[j]); 
                             if (SymbolBox == 0)
                             {
                                 if (tmp <= X1X2) // ограничение второго рода
@@ -423,18 +420,24 @@ namespace ParseFormuls
         /// <returns></returns>
         VX CheckSecondRestrictions(VX newWorst, VX complexCenter, int worstIndex, double accuracy)
         {
+            int index = 0;
             if (SymbolBox == 0)
                 while (CalculateF(SecondKindConstraint, newWorst.X1[0], newWorst.X2[0]) >= X1X2)
                 {
-                   // System.Windows.MessageBox.Show(CalculateF(SecondKindConstraint, newWorst.X1[0], newWorst.X2[0]).ToString() + " " + X1X2.ToString());
                     newWorst.X1[0] = (newWorst.X1[0] + complexCenter.X1[0]) / 2 ;
                     newWorst.X2[0] = (newWorst.X2[0] + complexCenter.X2[0]) / 2 ;
+                    index++;
+                    if (index == 100)
+                        break;
                 }
             else
                 while (CalculateF(SecondKindConstraint, newWorst.X1[0], newWorst.X2[0]) <= X1X2)
                 {
                     newWorst.X1[0] = (newWorst.X1[0] + complexCenter.X1[0]) / 2;
                     newWorst.X2[0] = (newWorst.X2[0] + complexCenter.X2[0]) / 2;
+                    index++;
+                    if (index == 100)
+                        break;
                 }
 
             return newWorst;
@@ -449,10 +452,14 @@ namespace ParseFormuls
         /// <returns></returns>
         VX FixVertexAndSwapFs(VX vx, VX newWorst, int worstIndex, int bestIndex)
         {
+            int index = 0;
             while (CalculateF(text, newWorst.X1[0], newWorst.X2[0]) < CalculateF(text, vx.X1[worstIndex], vx.X2[worstIndex]))
             {
                 newWorst.X1[0] = (newWorst.X1[0] + vx.X1[bestIndex]) / 2;
                 newWorst.X2[0] = (newWorst.X2[0] + vx.X2[bestIndex]) / 2;
+                index++;
+                if (index == 100)
+                    break;
             }
 
             vx.X1[worstIndex] = newWorst.X1[0];
