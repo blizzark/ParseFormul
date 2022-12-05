@@ -146,7 +146,7 @@ namespace ParseFormuls
         /// Формирование исходного Комплекса
         /// </summary>
         /// <returns></returns>
-        VX CreateInitialComplex() //TODO добавить переменные для верх/низ ограничений
+        VX CreateInitialComplex()
         {
 
             int n = 2;
@@ -248,8 +248,13 @@ namespace ParseFormuls
             int P = FindP(vx), n = 2;
             for (int i = 0; i < vx.isFixedVx.Count; i++)
             {
+                int check = 0;
                 while (!vx.isFixedVx[i])
                 {
+                    if(check > 300)
+                    {
+                        break;
+                    }
                     for (int j = 0; j < n; j++)
                     {
                         if (!vx.isFixedVx[i])
@@ -277,6 +282,7 @@ namespace ParseFormuls
                                     P = FindP(vx);
                                 }
                             }
+                            check++;
                         }
                     }
                 }
@@ -403,7 +409,7 @@ namespace ParseFormuls
             if (newWorst.X1[0] < minX1)
                 Math.Round(newWorst.X1[0] = minX1 + accuracy,3);
             else if (newWorst.X1[0] > maxX1)
-                Math.Round(newWorst.X1[0] = maxX2 - accuracy,3);
+                Math.Round(newWorst.X1[0] = maxX1 - accuracy,3);
 
             if (newWorst.X2[0] < minX2)
                 Math.Round(newWorst.X2[0] = minX2 + accuracy,3);
