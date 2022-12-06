@@ -10,8 +10,7 @@ namespace ParseFormuls
 {
     class BruteForceMethod : Method
     {
-        public BruteForceMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, string text, string nameX1, string nameX2, string SecondKindConstraint, double accuracy, int SymbolBox) 
-            : base(nameX1, nameX2)
+        public BruteForceMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox) 
         {
             const int less = 0;
             const int more = 1;
@@ -23,14 +22,14 @@ namespace ParseFormuls
                 for (double j = minX2; j <= maxX2; j = j + accuracy)
                 {
                   
-                    double tmp = CalculateF(SecondKindConstraint, i, j);
+                    double tmp = CallCalculator.SecondClassConstraintFunction(i, j);
 
                     if (SymbolBox == less)
                     {
                         if (tmp <= X1X2)
                         {
 
-                            result = CalculateF(text, i, j);
+                            result = CallCalculator.ObjectiveFunction(i, j);
 
                             if (answer < result)
                             {
@@ -46,7 +45,7 @@ namespace ParseFormuls
                     {
                         if (tmp >= X1X2)
                         {
-                            result = CalculateF(text, i, j);
+                            result = CallCalculator.ObjectiveFunction(i, j);
 
                             if (answer < result)
                             {

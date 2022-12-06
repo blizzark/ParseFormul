@@ -299,22 +299,51 @@
                     <TextBlock>Метод полного перебора с постоянным шагом</TextBlock>
                 </StackPanel>
             </ComboBoxItem>
+            <ComboBoxItem x:Name="ComboBoxFull">
+                <StackPanel>
+                    <TextBlock>Все перечисленные методы</TextBlock>
+                </StackPanel>
+            </ComboBoxItem>
         </ComboBox>
-        <ComboBox x:Name="VariantsComboBox" HorizontalAlignment="Left" Margin="353,46,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="VariantsComboBox_SelectionChanged" FontSize="14" Height="28" Grid.RowSpan="2">
-            <ComboBoxItem x:Name="Var6">
-                <StackPanel>
-                    <TextBlock>Вариант №6</TextBlock>
-                </StackPanel>
+        <ComboBox x:Name="VariantsComboBox" Margin="353,46,0,0" Width="120" SelectionChanged="VariantsComboBox_SelectionChanged" FontSize="14" Height="28" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <ComboBoxItem x:Name="Var6" Margin="0,0,0.4,0" Width="118" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Grid HorizontalAlignment="Left">
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Margin="0,0,-1.6,0"><Run Text="Вариант №6"/></TextBlock>
+                    </StackPanel>
+                <Menu Height="25" Width="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="86,0,-33.4,-0.2">
+                        <MenuItem  Header="▼" Height="25" Click="MenuItem_Click" Width="25" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <MenuItem x:Name="DescVar6" Header="Показать задачу целеком" Click="DescVar6_Click" />
+                        </MenuItem>
+
+                    </Menu>
+                </Grid>
             </ComboBoxItem>
-            <ComboBoxItem x:Name="Var3">
-                <StackPanel>
-                    <TextBlock>Вариант №3</TextBlock>
-                </StackPanel>
+            <ComboBoxItem x:Name="Var3" Margin="0,0,0.4,0" Width="118" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Grid HorizontalAlignment="Left">
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Margin="0,0,-1.6,0"><Run Text="Вариант №3"/></TextBlock>
+                    </StackPanel>
+                    <Menu Height="25" Width="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="86,0,-33.4,-0.2">
+                        <MenuItem  Header="▼" Height="25" Click="MenuItem_Click" Width="25" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <MenuItem x:Name="DescVar3" Header="Показать задачу целеком" Click="DescVar3_Click" />
+                        </MenuItem>
+
+                    </Menu>
+                </Grid>
             </ComboBoxItem>
-            <ComboBoxItem x:Name="Var5">
-                <StackPanel>
-                    <TextBlock>Вариант №5</TextBlock>
-                </StackPanel>
+            <ComboBoxItem x:Name="Var5" Margin="0,0,0.4,0" Width="118" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Grid HorizontalAlignment="Left">
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Margin="0,0,-1.6,0"><Run Text="Вариант №5"/></TextBlock>
+                    </StackPanel>
+                    <Menu Height="25" Width="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="86,0,-33.4,-0.2">
+                        <MenuItem Header="▼" Height="25" Click="MenuItem_Click" Width="25" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <MenuItem  x:Name="DescVar5" Header="Показать задачу целеком" Click="DescVar5_Click" />
+                        </MenuItem>
+
+                    </Menu>
+                </Grid>
             </ComboBoxItem>
         </ComboBox>
         <Button x:Name="FormCalc" Content="Режим калькулятора" HorizontalAlignment="Left" Margin="189,0,0,21.8" VerticalAlignment="Bottom" Width="148" Height="50" Click="FormCalc_Click" FontSize="14" Grid.Row="1"/>

@@ -1,24 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data;
-using System.Globalization;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Reflection;
-using System.Windows.Media.Media3D;
 using ChartDirector;
 
 
@@ -44,14 +29,6 @@ namespace ParseFormuls
         void OnChecked(object sender, RoutedEventArgs e)
         {
             //TODO надо бы сделать так, чтобы при выборе 2-х переменных, остальные нельзя было активировать
-            //int countOnCheck = 0;
-            //for (int i = 0; i < NameTableList.Count; i++)
-            //{
-            //    if (NameTableList[i].variable)
-            //    {
-            //        countOnCheck++;
-            //    }
-            //}
 
             NameTable cust = (NameTable)DataVariable.SelectedItem;
             if ((string)LabelX1.Content != cust.name)
@@ -105,30 +82,52 @@ namespace ParseFormuls
                 {
                     text = "-" + text;
                 }
-               
-               
+                CallCalculator.text = text;
+                CallCalculator.SecondKindConstraint = SecondKindConstraint;
+                CallCalculator.nameX1 = nameX1;
+                CallCalculator.nameX2 = nameX2;
+
+                
+
                 if (ComboBoxMethodBox.IsSelected)
                 {
-                    method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, text, nameX1, nameX2, SecondKindConstraint, accuracy, SymbolBox.SelectedIndex);
+                    method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
                 }
                 else if (ComboBoxMethodGen.IsSelected)
                 {
-                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, text, nameX1, nameX2, SecondKindConstraint, accuracy, SymbolBox.SelectedIndex);
+                    text = "-" + text;
+                    CallCalculator.text = text;
+                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+
                 }
                 else if(ComboBoxMethodFull.IsSelected)
                 {
-                    method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, text, nameX1, nameX2, SecondKindConstraint, accuracy, SymbolBox.SelectedIndex);   
+                    method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);   
+                }
+                else if (ComboBoxFull.IsSelected)
+                {
+                    string enter = "";
+                    method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    enter += "Метод Бокса:\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
+                    text = "-" + text;
+                    CallCalculator.text = text;
+                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    text = "-" + text;
+                    CallCalculator.text = text;
+                    enter += "\nГенетический метод:\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
+                    method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, 0.1, SymbolBox.SelectedIndex);
+                    enter += "\nМетод полного перебора (пониженная точность):\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
+                    System.Windows.MessageBox.Show(enter, "Результат вычислений всеми методами", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
-                AnswerLabelX1.Content = nameX1 + " = " + method.answerX1;
-                AnswerLabelX2.Content = nameX2 + " = " + method.answerX2;
+                AnswerLabelX1.Content = nameX1 + " = " + Math.Round(method.answerX1, 3);
+                AnswerLabelX2.Content = nameX2 + " = " + Math.Round(method.answerX2, 3);
                 TableXYZ.ItemsSource = method.InitialDataList;
-                //_3DGraph graphic = new _3DGraph(method.InitialDataList, minX1, maxX1, minX2, maxX2);
-                //graphic.ShowDialog();
                 SpinOX.IsEnabled = true;
                 SpinOY.IsEnabled = true;
                 SpinOX.Value = 20;
                 SpinOY.Value = 30;
+              
                 if (MinMaxBox.SelectedIndex == 0)
                 {
                     double aRes = Convert.ToDouble(method.answer);
@@ -145,7 +144,6 @@ namespace ParseFormuls
                     AnswerLabelF.Content = "F = " + method.answer;
                 }
                 CreateChart(method.InitialDataList, chartViewer, (int)SpinOX.Value, (int)SpinOY.Value);
-                //mDown = true;
             }
             catch (Exception ex)
             {
@@ -382,29 +380,16 @@ namespace ParseFormuls
 
             //Задаем вид графика
             chart.setPlotRegion(440, 360, 500, 500, 350);
-
-            // Set the elevation and rotation angles to 20 and 30 degrees
             chart.setViewAngle(xAngle, yAngle);
-
-            // Set the data to use to plot the chart
             chart.setData(dataX, dataY, dataZ);
-
-            // Spline interpolate data to a 80 x 80 grid for a smooth surface
             chart.setInterpolation(80, 80);
-
-            // Set surface grid lines to semi-transparent black (dd000000)
             chart.setSurfaceAxisGrid(unchecked((int)0xdd000000));
-
-            // Set contour lines to semi-transparent white (80ffffff)
             chart.setContourColor(unchecked((int)0x80ffffff));
-
-            //Делаем легенду
             chart.setColorAxis(825, 350, ChartDirector.Chart.Left, 200, ChartDirector.Chart.Right).setColorGradient();
 
             //Подписываем оси
             chart.xAxis().setTitle((string)LabelX1.Content, "Arial Bold", 15);
             chart.yAxis().setTitle((string)LabelX2.Content, "Arial Bold", 15);
-            // chart.zAxis().setTitle("C", "Arial Bold", 10);
 
             //Передаем график в вьювер
             viewer.Chart = chart;
@@ -426,8 +411,30 @@ namespace ParseFormuls
             CreateChart(method.InitialDataList, chartViewer, (int)SpinOX.Value, (int)SpinOY.Value);
         }
 
+
         #endregion
 
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+
+        private void DescVar6_Click(object sender, RoutedEventArgs e)
+        {
+            Description win = new Description(6);
+            win.ShowDialog();
+        }
+
+        private void DescVar3_Click(object sender, RoutedEventArgs e)
+        {
+            Description win = new Description(3);
+            win.ShowDialog();
+        }
+
+        private void DescVar5_Click(object sender, RoutedEventArgs e)
+        {
+            Description win = new Description(5);
+            win.ShowDialog();
+        }
     }
 } 

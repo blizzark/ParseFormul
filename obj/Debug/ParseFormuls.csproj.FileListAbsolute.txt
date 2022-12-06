@@ -16,3 +16,5 @@ D:\Project\ParseFormuls\ParseFormuls\obj\Debug\ParseFormuls.pdb
 D:\Project\ParseFormuls\ParseFormuls\obj\Debug\FormForCalculations.g.cs
 D:\Project\ParseFormuls\ParseFormuls\obj\Debug\FormForCalculations.baml
 D:\Project\ParseFormuls\ParseFormuls\obj\Debug\ParseFormuls.csproj.CopyComplete
+D:\Project\ParseFormuls\ParseFormuls\obj\Debug\Description.g.cs
+D:\Project\ParseFormuls\ParseFormuls\obj\Debug\Description.baml

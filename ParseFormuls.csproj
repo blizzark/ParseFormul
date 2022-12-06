@@ -69,7 +69,11 @@
     </ApplicationDefinition>
     <Compile Include="BoxMethod.cs" />
     <Compile Include="BruteForceMethod.cs" />
+    <Compile Include="CallCalculator.cs" />
     <Compile Include="Chromosome.cs" />
+    <Compile Include="Description.xaml.cs">
+      <DependentUpon>Description.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FormForCalculations.xaml.cs">
       <DependentUpon>FormForCalculations.xaml</DependentUpon>
     </Compile>
@@ -79,6 +83,10 @@
     <Compile Include="NameTable.cs" />
     <Compile Include="Population.cs" />
     <Compile Include="Сalculator.cs" />
+    <Page Include="Description.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FormForCalculations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

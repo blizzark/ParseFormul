@@ -13,10 +13,6 @@ namespace ParseFormuls
         private int maxX1 = 0;
         private int maxX2 = 0;
         private int X1X2 = 0;
-        private string text = "";
-        private string nameX1 = "";
-        private string nameX2 = "";
-        private string SecondKindConstraint = "";
         private double accuracy = 0;
         private int SymbolBox = 0;
 
@@ -36,8 +32,7 @@ namespace ParseFormuls
             public List<bool> isFixedVx { get; set; }
         }
 
-        public BoxMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, string text, string nameX1, string nameX2, string SecondKindConstraint, double accuracy, int SymbolBox) 
-            : base(nameX1, nameX2)
+        public BoxMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox)
         {
             #region Передача в поля класса
             this.minX1 = minX1;
@@ -45,10 +40,6 @@ namespace ParseFormuls
             this.maxX1 = maxX1;
             this.maxX2 = maxX2;
             this.X1X2 = X1X2;
-            this.text = text;
-            this.nameX1 = nameX1;
-            this.nameX2 = nameX2;
-            this.SecondKindConstraint = SecondKindConstraint;
             this.accuracy = accuracy;
             this.SymbolBox = SymbolBox;
             #endregion
@@ -94,7 +85,7 @@ namespace ParseFormuls
                         InitialDataList.Add(new InitialData(Math.Round(vx.X1[i],3).ToString(), Math.Round(vx.X2[i],3).ToString(), vx.F[i].ToString()));
                     }
 
-                    complexCenter.F[0] = CalculateF(text, complexCenter.X1[0], complexCenter.X2[0]);
+                    complexCenter.F[0] = CallCalculator.ObjectiveFunction(complexCenter.X1[0], complexCenter.X2[0]);
                     InitialDataList.Add(new InitialData(Math.Round(complexCenter.X1[0],3).ToString(), Math.Round(complexCenter.X2[0],3).ToString(), complexCenter.F[0].ToString()));
 
                     answerX1 = Math.Round(complexCenter.X1[0], 3);
@@ -118,9 +109,9 @@ namespace ParseFormuls
                     {
                         VX newWorst = FindNewComplexCoordsInsteadWorst(vx, complexCenter, worstIndex, accuracy);
                         newWorst = CheckSecondRestrictions(newWorst, complexCenter,worstIndex, accuracy);
-                        newWorst.F[0] = CalculateF(text, newWorst.X1[0], newWorst.X2[0]);
+                        newWorst.F[0] = CallCalculator.ObjectiveFunction(newWorst.X1[0], newWorst.X2[0]);
                         vx = FixVertexAndSwapFs(vx, newWorst, worstIndex, bestIndex);
-
+                    
                         newWorst.X1.Clear();
                         newWorst.X2.Clear();
                         newWorst.F.Clear();
@@ -181,7 +172,7 @@ namespace ParseFormuls
                             vx.X2.Add(x);
                     }
                     
-                    double tmp = CalculateF(SecondKindConstraint, vx.X1[j], vx.X2[j]);
+                    double tmp = CallCalculator.SecondClassConstraintFunction(vx.X1[j], vx.X2[j]);
                     if (SymbolBox == 0)
                     {
                         if (tmp <= X1X2) // ограничение второго рода
@@ -265,7 +256,7 @@ namespace ParseFormuls
                             {
                                 vx.X2[i] = 0.5 * (vx.X2[i] + ((1 / P) * SumAllFixedVxs(vx, j)));
                             }
-                            double tmp = CalculateF(SecondKindConstraint, vx.X1[j], vx.X2[j]); 
+                            double tmp = CallCalculator.SecondClassConstraintFunction(vx.X1[j], vx.X2[j]); 
                             if (SymbolBox == 0)
                             {
                                 if (tmp <= X1X2) // ограничение второго рода
@@ -298,7 +289,7 @@ namespace ParseFormuls
         {
             for (int i = 0; i < vx.isFixedVx.Count; i++)
             {
-                vx.F.Add(CalculateF(text, vx.X1[i], vx.X2[i]));
+                vx.F.Add(CallCalculator.ObjectiveFunction(vx.X1[i], vx.X2[i]));
             }
             return vx;
         }
@@ -428,7 +419,7 @@ namespace ParseFormuls
         {
             int index = 0;
             if (SymbolBox == 0)
-                while (CalculateF(SecondKindConstraint, newWorst.X1[0], newWorst.X2[0]) >= X1X2)
+                while (CallCalculator.SecondClassConstraintFunction(newWorst.X1[0], newWorst.X2[0]) >= X1X2)
                 {
                     newWorst.X1[0] = (newWorst.X1[0] + complexCenter.X1[0]) / 2 ;
                     newWorst.X2[0] = (newWorst.X2[0] + complexCenter.X2[0]) / 2 ;
@@ -437,7 +428,7 @@ namespace ParseFormuls
                         break;
                 }
             else
-                while (CalculateF(SecondKindConstraint, newWorst.X1[0], newWorst.X2[0]) <= X1X2)
+                while (CallCalculator.SecondClassConstraintFunction(newWorst.X1[0], newWorst.X2[0]) <= X1X2)
                 {
                     newWorst.X1[0] = (newWorst.X1[0] + complexCenter.X1[0]) / 2;
                     newWorst.X2[0] = (newWorst.X2[0] + complexCenter.X2[0]) / 2;
@@ -459,7 +450,7 @@ namespace ParseFormuls
         VX FixVertexAndSwapFs(VX vx, VX newWorst, int worstIndex, int bestIndex)
         {
             int index = 0;
-            while (CalculateF(text, newWorst.X1[0], newWorst.X2[0]) < CalculateF(text, vx.X1[worstIndex], vx.X2[worstIndex]))
+            while (CallCalculator.ObjectiveFunction(newWorst.X1[0], newWorst.X2[0]) < CallCalculator.ObjectiveFunction(vx.X1[worstIndex], vx.X2[worstIndex]))
             {
                 newWorst.X1[0] = (newWorst.X1[0] + vx.X1[bestIndex]) / 2;
                 newWorst.X2[0] = (newWorst.X2[0] + vx.X2[bestIndex]) / 2;
@@ -470,7 +461,7 @@ namespace ParseFormuls
 
             vx.X1[worstIndex] = newWorst.X1[0];
             vx.X2[worstIndex] = newWorst.X2[0];
-            vx.F[worstIndex] = CalculateF(text, newWorst.X1[0], newWorst.X2[0]);
+            vx.F[worstIndex] = CallCalculator.ObjectiveFunction(newWorst.X1[0], newWorst.X2[0]);
             return vx;
         }
     }

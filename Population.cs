@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParseFormuls
 {
     class Population
     {
-        // The size of the tournament
-        private const int TOURNAMENT_SIZE = 3;
 
-        // Convenience randomizer
         private static Random rnd = new Random((int)DateTime.Now.Ticks);
 
         private double _elitism;
@@ -24,13 +17,19 @@ namespace ParseFormuls
         private int maxX2 = 0;
         private int X1X2 = 0;
         /// <summary>
-        /// Default constructor
+        /// Конструктор для создания популяции
         /// </summary>
         /// <param name="size">Размер популяции, где размер > 0</param>
-        /// <param name="crossoverRatio">Коэффициент кроссовера для популяции в процессе эволюции <= crossoverRatio <= 1.0</param>
-        /// <param name="elitismRatio">Коэффициент оставления населения в процессе эволюции <= elitismRatio <= 1.0</param>
+        /// <param name="crossoverRatio">Коэффициент кроссовера для популяции в процессе эволюции (вероятноесть скрещивания) <= crossoverRatio <= 1.0</param>
+        /// <param name="elitismRatio">Коэффициент оставления населения в процессе эволюции (другая часть отбрасывается (т.е. не выжила)) <= elitismRatio <= 1.0</param>
         /// <param name="mutationRatio">Коэффициент мутаций для популяции в процессе эволюции, где 0,0<= mutationRatio <= 1.0</param>
-	    public Population(int size, double crossoverRatio, double elitismRatio, double mutationRatio, int minX1, int minX2, int maxX1, int maxX2, int X1X2, int SymbolBox)
+        /// <param name="minX1">Минимальные ограничения Х1</param>
+        /// <param name="minX2">Минимальные ограничения Х2</param>
+        /// <param name="maxX1">Максимальные ограничения Х1</param>
+        /// <param name="maxX2">Максимальные ограничения Х2</param>
+        /// <param name="X1X2">Ограничение 2-го рода</param>
+        /// <param name="SymbolBox">Показывает в какую сторону направлен знак для ограничений 2-го рода</param>
+        public Population(int size, double crossoverRatio, double elitismRatio, double mutationRatio, int minX1, int minX2, int maxX1, int maxX2, int X1X2, int SymbolBox)
         {
             #region Передача в поля класса
             this.minX1 = minX1;
@@ -43,42 +42,47 @@ namespace ParseFormuls
             this._elitism = elitismRatio;
             this._mutation = mutationRatio;
 
-            // Generate an initial population
+           
             this._populace = new Chromosome[size];
-            
+            Chromosome.SymbolBox = SymbolBox;
+            Chromosome.X1X2 = X1X2;
+            // Генерируем начальную популяцию
             for (int i = 0; i < size; i++)
             {
-                this._populace[i] = Chromosome.GenerateRandom(minX1, minX2, maxX1, maxX2, X1X2, SymbolBox);
+                this._populace[i] = Chromosome.GenerateRandom(minX1, minX2, maxX1, maxX2);
             }
 
             Array.Sort(this._populace);
+
+
+
         }
 
         /// <summary>
-        /// Evolve the population
+        /// Эволюция популяции
         /// </summary>
         public void Evolve()
         {
-            // Create a buffer for the new generation
+            // Создайте буфер для нового поколения
             Chromosome[] buffer = new Chromosome[_populace.Length];
 
-            // Copy over a portion of the population unchanged, based on 
-            // the elitism ratio.
+            // Скопируйте часть населения без изменений на основе
+            // коэффициент элитарности.
             int idx = (int)Math.Round(_populace.Length * _elitism, 3);
             Array.Copy(_populace, 0, buffer, 0, idx);
 
-            // Iterate over the remainder of the population and evolve as 
-            // appropriate.
+            // Перебираем оставшуюся часть популяции и развиваемся по мере
+            // соответствтия.
             while (idx < buffer.Length)
             {
-                // Check to see if we should perform a crossover. 
+                // Проверяем, должны ли мы выполнять кроссовер.
                 if (rnd.NextDouble() <= _crossover)
                 {
-                    // Select the parents and mate to get their children
+                    // Выбираем родителей и пару, чтобы получить их потомков
                     Chromosome[] parents = SelectParents();
-                    Chromosome[] children = parents[0].Mate(parents[1]);
+                    Chromosome[] children = parents[0].Сrossover(parents[1]);
 
-                    // Check to see if the first child should be mutated.
+                    // Проверяем, должен ли быть мутирован первый потомок.
                     if (rnd.NextDouble() <= _mutation)
                     {
                         buffer[idx++] = children[0].Mutate(minX1, minX2, maxX1, maxX2);
@@ -88,7 +92,7 @@ namespace ParseFormuls
                         buffer[idx++] = children[0];
                     }
 
-                    // Repeat for the second child, if there is room.
+                    // Повторить для второго потомка, если есть место.
                     if (idx < buffer.Length)
                     {
                         if (rnd.NextDouble() <= _mutation)
@@ -103,8 +107,8 @@ namespace ParseFormuls
                 }
                 else
                 {
-                    // No crossover, so copy verbatium.
-                    // Determine if mutation should occur.
+                  // Нет кроссовера, так что скопируйте то, что было.
+                  // Определяем, должна ли произойти мутация.
                     if (rnd.NextDouble() <= _mutation)
                     {
                         buffer[idx] = _populace[idx].Mutate(minX1, minX2, maxX1, maxX2);
@@ -114,23 +118,20 @@ namespace ParseFormuls
                         buffer[idx] = _populace[idx];
                     }
                 }
-
-                // Increase our counter
                 ++idx;
             }
 
-            // Sort the buffer based on fitness.
+            // Сортируем буфер по пригодности.
             Array.Sort(buffer);
 
-            // Reset the population
+            // Меняем популяцию
             _populace = buffer;
         }
 
         /// <summary>
-        /// Retrieve a copy of the current population. This method returns a 
-        /// copy of the population at the time the method was called.
+        /// Получаем копию текущей популяции
         /// </summary>
-        /// <returns>Array of Chromosomes representing current populace</returns>
+        /// <returns>Массив хромосом, представляющий текущую популяцию</returns>
         public Chromosome[] GetPopulation()
         {
             Chromosome[] arr = new Chromosome[_populace.Length];
@@ -140,46 +141,19 @@ namespace ParseFormuls
         }
 
         /// <summary>
-        /// Retrieve the elitism ratio for the population.
+        /// Вспомогательный метод, который можно использовать для выбора двух случайных родителей из популяции для использования в кроссовере во время эволюции.
         /// </summary>
-        /// <returns>Elitism ratio</returns>
-        public double GetElitism()
-        {
-            return _elitism;
-        }
-
-        /// <summary>
-        /// Retrieve the crossover ratio for the population.
-        /// </summary>
-        /// <returns>Crossover ratio</returns>
-        public double GetCrossover()
-        {
-            return _crossover;
-        }
-
-        /// <summary>
-        /// Retrieve the mutation ratio for the population.
-        /// </summary>
-        /// <returns>Mutation ratio</returns>
-        public double GetMutation()
-        {
-            return _mutation;
-        }
-
-        /// <summary>
-        /// A helper method that can be used to select two random parents from the population to use in crossover during evolution.
-        /// </summary>
-        /// <returns>Two randomly selected Chromosomes for crossover.</returns>
+        /// <returns>Две случайно выбранные хромосомы для скрещивания.</returns>
 	    private Chromosome[] SelectParents()
         {
             Chromosome[] parents = new Chromosome[2];
-
+            const int TOURNAMENT_SIZE = 3;
             // Randomly select two parents via tournament selection.
             for (int i = 0; i < 2; i++)
             {
                 parents[i] = _populace[rnd.Next(_populace.Length)];
 
-                for (int j = 0; j < TOURNAMENT_SIZE; j++)
+                for (int j = 0; j < TOURNAMENT_SIZE; j++) 
                 {
                     int idx = rnd.Next(_populace.Length);
 
