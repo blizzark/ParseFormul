@@ -84,22 +84,12 @@ namespace ParseFormuls
 
             double c2X1 = 0;
             double c2X2 = 0;
-            if (position < 50)
-            {
-                c1X1 = fX1;
-                c1X2 = mX2;
 
-                c2X1 = mX1;
-                c2X2 = fX2;
-            }
-            else
-            {
-                c1X1 = fX1;
-                c1X2 = fX2;
+            c1X1 = fX1;
+            c1X2 = mX2;
 
-                c2X1 = mX1;
-                c2X2 = mX2;
-            }
+            c2X1 = mX1;
+            c2X2 = fX2;
 
 
             return new Chromosome[] {
