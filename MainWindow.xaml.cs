@@ -77,8 +77,35 @@ namespace ParseFormuls
                 int maxX2 = Convert.ToInt32(TextBoxMaxX2.Text);
                 int X1X2 = Convert.ToInt32(TextBoxX1X2.Text);
                 double accuracy = double.Parse(AccuracyBox.Text);
+                if (accuracy < 0 || accuracy > 1)
+                    throw new Exception("Точность вне предела диапазона");
 
-                if(MinMaxBox.SelectedIndex == 0)
+                int populationSize = Convert.ToInt32(populationSizeBox.Text);
+                if(populationSize<0 || populationSize>10000)
+                    throw new Exception("Размер популяции вне предела диапазона");
+
+                int maxGenerations = Convert.ToInt32(maxGenerationsBox.Text);
+                if (maxGenerations < 0 || maxGenerations > 10000)
+                    throw new Exception("Максимальное числопоколений вне предела диапазона");
+
+                double crossoverRatio = double.Parse(crossoverRatioBox.Text);
+                if (crossoverRatio < 0 || crossoverRatio > 1)
+                    throw new Exception("Коэффицент скрещивания вне предела диапазона");
+
+                double elitismRatio = double.Parse(elitismRatioBox.Text);
+                if (elitismRatio < 0 || elitismRatio > 1)
+                    throw new Exception("Коэффицент элитарности вне предела диапазона");
+
+                double mutationRatio = double.Parse(crossoverRatioBox.Text);
+                if (mutationRatio < 0 || mutationRatio > 1)
+                    throw new Exception("Коэффицент мутации вне предела диапазона");
+
+                int tournamentSize = Convert.ToInt32(tournamentSizeBox.Text);
+                if (tournamentSize < 0 || tournamentSize > 100)
+                    throw new Exception("Размер турнира родителей вне предела диапазона");
+
+
+                if (MinMaxBox.SelectedIndex == 0)
                 {
                     text = "-" + text;
                 }
@@ -86,8 +113,6 @@ namespace ParseFormuls
                 CallCalculator.SecondKindConstraint = SecondKindConstraint;
                 CallCalculator.nameX1 = nameX1;
                 CallCalculator.nameX2 = nameX2;
-
-                
 
                 if (ComboBoxMethodBox.IsSelected)
                 {
@@ -97,7 +122,7 @@ namespace ParseFormuls
                 {
                     text = "-" + text;
                     CallCalculator.text = text;
-                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex, populationSize, maxGenerations, crossoverRatio, elitismRatio, mutationRatio, tournamentSize);
 
                 }
                 else if(ComboBoxMethodFull.IsSelected)
@@ -111,7 +136,7 @@ namespace ParseFormuls
                     enter += "Метод Бокса:\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
                     text = "-" + text;
                     CallCalculator.text = text;
-                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex, populationSize, maxGenerations, crossoverRatio, elitismRatio, mutationRatio, tournamentSize);
                     text = "-" + text;
                     CallCalculator.text = text;
                     enter += "\nГенетический метод:\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
@@ -127,7 +152,7 @@ namespace ParseFormuls
                 SpinOY.IsEnabled = true;
                 SpinOX.Value = 20;
                 SpinOY.Value = 30;
-              
+                NumGenLable.Content = method.NumberGenerations;
                 if (MinMaxBox.SelectedIndex == 0)
                 {
                     double aRes = Convert.ToDouble(method.answer);
@@ -435,6 +460,16 @@ namespace ParseFormuls
         {
             Description win = new Description(5);
             win.ShowDialog();
+        }
+
+        private void ComboBoxMet_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ComboBoxMet.SelectedIndex == 2)
+            {
+                System.Windows.MessageBox.Show("Точность была изменена на 0.1, т.к. иначе вычисления займут много времени (>30 сек)\nНе забудьте вернуть значение погрешности при работе с другими алгоритмами!", "Внимание!");
+                AccuracyBox.Text = (0.1).ToString();
+            }
+
         }
     }
 } 

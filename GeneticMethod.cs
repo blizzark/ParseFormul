@@ -5,38 +5,28 @@ namespace ParseFormuls
 { 
     class GeneticMethod : Method
     {
-        private int minX1 = 0;
-        private int minX2 = 0;
-        private int maxX1 = 0;
-        private int maxX2 = 0;
-        private int X1X2 = 0;
 
-        public GeneticMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox)
+        /// <summary>
+        /// Генетический алгоритм
+        /// </summary>
+        /// <param name="minX1">Минимум для первой переменной (огрничение 1-го рода)</param>
+        /// <param name="minX2">Минимум для второй переменной (огрничение 1-го рода)</param>
+        /// <param name="maxX1">Максимум для первой переменной (огрничение 1-го рода)</param>
+        /// <param name="maxX2">Максимум для второй переменной (огрничение 1-го рода)</param>
+        /// <param name="X1X2">Значение ограничения второго рода</param>
+        /// <param name="accuracy">Погрешность</param>
+        /// <param name="SymbolBox">Символ больше или меньше в ограничении 2-го рода</param>
+        /// <param name="populationSize"> Размер моделируемой популяции</param>
+        /// <param name="maxGenerations"> Максимальное количество поколений для моделирования. критерий остановки</param>
+        /// <param name="crossoverRatio">Вероятность кроссовера для любого члена популяции,  де 0.0 <= crossoverRatio <= 1.0</param>
+        /// <param name="elitismRatio"> Часть населения, которая останется без изменений между эволюциями, где 0.0 <= elitismRatio < 1.0</param>
+        /// <param name="mutationRatio">Вероятность мутации для любого члена популяции, где 0.0 <=mutationRatio <= 1.0</param>
+        /// <param name="tournamentSize">Вероятность мутации для любого члена популяции, где 0.0 <=mutationRatio <= 1.0</param>
+        public GeneticMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox, int populationSize, int maxGenerations, double crossoverRatio, double elitismRatio, double mutationRatio, int tournamentSize) 
+            : base(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox)
         {
-            this.minX1 = minX1;
-            this.minX2 = minX2;
-            this.maxX1 = maxX1;
-            this.maxX2 = maxX2;
-            this.X1X2 = X1X2;
 
             const long maxFitnes = 9999999999;
-            // Размер моделируемой популяции
-            const int populationSize = 200;
-
-            // Максимальное количество поколений для моделирования.
-            const int maxGenerations = 300;
-
-            // Вероятность кроссовера для любого члена популяции,
-            // где 0.0 <= crossoverRatio <= 1.0
-            const double crossoverRatio = 5.0d;
-
-            // Часть населения, которая останется без изменений
-            // между эволюциями, где 0.0 <= elitismRatio < 1.0
-            const double elitismRatio = 0.6d;
-
-            // Вероятность мутации для любого члена популяции,
-            // где 0.0 <=mutationRatio <= 1.0
-            const double mutationRatio = 0.10d;
 
             // Создаём начальную популяцию
             Population population = new Population(populationSize, crossoverRatio, elitismRatio, mutationRatio, minX1, minX2, maxX1, maxX2, X1X2, SymbolBox);
@@ -46,15 +36,17 @@ namespace ParseFormuls
             int i = 0;
             Chromosome best = population.GetPopulation()[0];
             Chromosome[] answerList = population.GetPopulation();
-            while ((i++ <= maxGenerations) && (StopCriteriaCheck(answerList)))
+            while ((i++ <= maxGenerations) && (StopCriteriaCheck(answerList))) //записываем каждый раз лучший ответ, пока не достигнем критерия остановки (не достигнем макс колич поколений)
             {
-                population.Evolve();
-                best = population.GetPopulation()[0];
+                population.Evolve(tournamentSize);
+                best = population.GetPopulation()[0]; // временно записываемлучшую хромосому
                 answerList = population.GetPopulation();
             }
             answerX1 = best._geneX1;
             answerX2 = best._geneX2;
             answer = -best._fitness;
+            i -= 2;
+            NumberGenerations = i;
 
             InitialDataList = new List<InitialData>();
             answerList = population.GetPopulation();
@@ -69,12 +61,12 @@ namespace ParseFormuls
             {
                 double deltaX1 = 0;
                 double deltaX2 = 0;
-                for (int k = 0; k < c.Length - 1; k++)
+                for (int k = 0; k < c.Length * elitismRatio; k++)
                 {
                     if (c[k]._fitness != maxFitnes)
                     {
-                        double deltaX1new = Math.Abs(c[k]._geneX1 - c[k + 1]._geneX1);
-                        double deltaX2new = Math.Abs(c[k]._geneX2 - c[k + 1]._geneX2);
+                        double deltaX1new = Math.Abs(c[k]._geneX1 - c[k + 1]._geneX1); //ищем разницу между значениями генов
+                        double deltaX2new = Math.Abs(c[k]._geneX2 - c[k + 1]._geneX2);//чтоб выяснить, на сколько они изменяются с поколением
 
                         if (deltaX1new > deltaX1)
                             deltaX1 = deltaX1new;
@@ -82,7 +74,7 @@ namespace ParseFormuls
                             deltaX2 = deltaX2new;
                     }
                 }
-                if (deltaX1 < 0.01 && deltaX2 < 0.01)
+                if (deltaX1 < accuracy && deltaX2 < accuracy)
                     return false;
 
                 return true;

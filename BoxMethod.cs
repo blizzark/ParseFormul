@@ -8,13 +8,6 @@ namespace ParseFormuls
 {
     class BoxMethod : Method
     {
-        private int minX1 = 0;
-        private int minX2 = 0;
-        private int maxX1 = 0;
-        private int maxX2 = 0;
-        private int X1X2 = 0;
-        private double accuracy = 0;
-        private int SymbolBox = 0;
 
         private struct VX
         {
@@ -32,17 +25,8 @@ namespace ParseFormuls
             public List<bool> isFixedVx { get; set; }
         }
 
-        public BoxMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox)
+        public BoxMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox) : base(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox)
         {
-            #region Передача в поля класса
-            this.minX1 = minX1;
-            this.minX2 = minX2;
-            this.maxX1 = maxX1;
-            this.maxX2 = maxX2;
-            this.X1X2 = X1X2;
-            this.accuracy = accuracy;
-            this.SymbolBox = SymbolBox;
-            #endregion
 
             VX vx;
             try

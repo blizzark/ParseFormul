@@ -32,13 +32,14 @@ namespace ParseFormuls
         {
             double fitness = 0;
 
-            double F = CallCalculator.SecondClassConstraintFunction(geneX1, geneX2);
+            double F = CallCalculator.SecondClassConstraintFunction(geneX1, geneX2); // высчитываем значение ограничения второго рода
 
-            if (SymbolBox == 0)
+            if (SymbolBox == 0) // выбор знака в ограничении второго рода (больше/меньше)
             {
                 if (F > X1X2)
                 {
                     return 9999999999;
+                    // чтобы убить их, если ограничение второго рода не выполняется, то присваевается  99999999 и при следующем поколении хромосома не выживает
                 }
             }
             else
@@ -49,7 +50,7 @@ namespace ParseFormuls
                 }
             }
 
-            fitness = CallCalculator.ObjectiveFunction(geneX1, geneX2);
+            fitness = CallCalculator.ObjectiveFunction(geneX1, geneX2); // Расчёт целевой функции
 
             return fitness;
         }
@@ -111,8 +112,8 @@ namespace ParseFormuls
             double X1 = 0;
             double X2 = 0;
 
-            X1 = rnd.Next(minX1 * 1000, maxX1 * 1000) / 1000.0;
-            X2 = rnd.Next(minX2 * 1000, maxX2 * 1000) / 1000.0;
+            X1 = rnd.Next(minX1 * 1000, maxX1 * 1000) / 1000.0; // рандомно создает ген в пределах ограничений первого рода
+            X2 = rnd.Next(minX2 * 1000, maxX2 * 1000) / 1000.0; //ген - это наши параметры, которые ищем
 
             return new Chromosome(X1, X2);
         }

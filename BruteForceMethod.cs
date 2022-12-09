@@ -10,7 +10,7 @@ namespace ParseFormuls
 {
     class BruteForceMethod : Method
     {
-        public BruteForceMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox) 
+        public BruteForceMethod(int minX1, int minX2, int maxX1, int maxX2, int X1X2, double accuracy, int SymbolBox) : base(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox)
         {
             const int less = 0;
             const int more = 1;

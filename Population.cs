@@ -61,13 +61,13 @@ namespace ParseFormuls
         /// <summary>
         /// Эволюция популяции
         /// </summary>
-        public void Evolve()
+        public void Evolve(int tournamentSize)
         {
             // Создайте буфер для нового поколения
             Chromosome[] buffer = new Chromosome[_populace.Length];
 
             // Скопируйте часть населения без изменений на основе
-            // коэффициент элитарности.
+            // коэффициент элитарности ()процент, который выживает.
             int idx = (int)Math.Round(_populace.Length * _elitism, 3);
             Array.Copy(_populace, 0, buffer, 0, idx);
 
@@ -79,7 +79,7 @@ namespace ParseFormuls
                 if (rnd.NextDouble() <= _crossover)
                 {
                     // Выбираем родителей и пару, чтобы получить их потомков
-                    Chromosome[] parents = SelectParents();
+                    Chromosome[] parents = SelectParents(tournamentSize);
                     Chromosome[] children = parents[0].Сrossover(parents[1]);
 
                     // Проверяем, должен ли быть мутирован первый потомок.
@@ -144,16 +144,15 @@ namespace ParseFormuls
         /// Вспомогательный метод, который можно использовать для выбора двух случайных родителей из популяции для использования в кроссовере во время эволюции.
         /// </summary>
         /// <returns>Две случайно выбранные хромосомы для скрещивания.</returns>
-	    private Chromosome[] SelectParents()
+	    private Chromosome[] SelectParents(int tournamentSize)
         {
             Chromosome[] parents = new Chromosome[2];
-            const int TOURNAMENT_SIZE = 3;
             // Randomly select two parents via tournament selection.
             for (int i = 0; i < 2; i++)
             {
                 parents[i] = _populace[rnd.Next(_populace.Length)];
 
-                for (int j = 0; j < TOURNAMENT_SIZE; j++) 
+                for (int j = 0; j < tournamentSize; j++) 
                 {
                     int idx = rnd.Next(_populace.Length);
 
