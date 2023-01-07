@@ -433,10 +433,10 @@
                 <TextBox x:Name="TextBoxMaxX1" HorizontalAlignment="Left" Height="23" Margin="238,10,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="54" PreviewMouseDown="TextBoxMaxX1_PreviewMouseDown" FontSize="14"/>
                 <TextBox x:Name="TextBoxMinX2" HorizontalAlignment="Left" Height="23" Margin="19,38,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="54" PreviewMouseDown="TextBoxMinX2_PreviewMouseDown" FontSize="14"/>
                 <TextBox x:Name="TextBoxMaxX2" HorizontalAlignment="Left" Height="23" Margin="238,38,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="54" PreviewMouseDown="TextBoxMaxX2_PreviewMouseDown" FontSize="14"/>
-                <Label Content="&gt;=" HorizontalAlignment="Left" Margin="87,6,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="&gt;=" HorizontalAlignment="Left" Margin="87,32,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="&gt;=" HorizontalAlignment="Left" Margin="195,6,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Content="&gt;=" HorizontalAlignment="Left" Margin="195,32,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="&lt;=" HorizontalAlignment="Left" Margin="87,6,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="&lt;=" HorizontalAlignment="Left" Margin="87,32,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="&lt;=" HorizontalAlignment="Left" Margin="195,6,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Content="&lt;=" HorizontalAlignment="Left" Margin="195,32,0,0" VerticalAlignment="Top" FontSize="14"/>
                 <Label x:Name="LabelX1" Content="" HorizontalAlignment="Left" Margin="137,6,0,0" VerticalAlignment="Top" FontSize="14"/>
                 <Label x:Name="LabelX2" Content="" HorizontalAlignment="Left" Margin="137,32,0,0" VerticalAlignment="Top" FontSize="14"/>
 

@@ -116,23 +116,56 @@ namespace ParseFormuls
 
                 if (ComboBoxMethodBox.IsSelected)
                 {
-                    method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    if (SymbolBox.SelectedIndex == 0)
+                    {
+                        do
+                        {
+                            method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                        } while (CallCalculator.SecondClassConstraintFunction(method.answerX1, method.answerX2) > X1X2);
+                    }
+                    else
+                    {
+                        do
+                        {
+                            method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                        } while (CallCalculator.SecondClassConstraintFunction(method.answerX1, method.answerX2) < X1X2);
+                    }
                 }
                 else if (ComboBoxMethodGen.IsSelected)
                 {
                     text = "-" + text;
                     CallCalculator.text = text;
                     method = new GeneticMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex, populationSize, maxGenerations, crossoverRatio, elitismRatio, mutationRatio, tournamentSize);
-
+                    NumGenLable.Content = method.NumberGenerations;
+                    text = "-" + text;
+                    CallCalculator.text = text;
                 }
                 else if(ComboBoxMethodFull.IsSelected)
                 {
-                    method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);   
+                    if (SymbolBox.SelectedIndex == 0)
+                    {
+
+                        method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    }
+
                 }
                 else if (ComboBoxFull.IsSelected)
                 {
                     string enter = "";
-                    method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                    if (SymbolBox.SelectedIndex == 0)
+                    {
+                        do
+                        {
+                            method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                        } while (CallCalculator.SecondClassConstraintFunction(method.answerX1, method.answerX2) > X1X2);
+                    }
+                    else
+                    {
+                        do
+                        {
+                            method = new BoxMethod(minX1, minX2, maxX1, maxX2, X1X2, accuracy, SymbolBox.SelectedIndex);
+                        } while (CallCalculator.SecondClassConstraintFunction(method.answerX1, method.answerX2) < X1X2);
+                    }
                     enter += "Метод Бокса:\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
                     text = "-" + text;
                     CallCalculator.text = text;
@@ -143,31 +176,33 @@ namespace ParseFormuls
                     method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, 0.1, SymbolBox.SelectedIndex);
                     enter += "\nМетод полного перебора (пониженная точность):\n" + nameX1 + " = " + Math.Round(method.answerX1, 3) + " " + nameX2 + " = " + Math.Round(method.answerX2, 3) + " F = " + (-method.answer);
                     System.Windows.MessageBox.Show(enter, "Результат вычислений всеми методами", MessageBoxButton.OK, MessageBoxImage.Information);
+                    NumGenLable.Content = method.NumberGenerations;
                 }
 
                 AnswerLabelX1.Content = nameX1 + " = " + Math.Round(method.answerX1, 3);
                 AnswerLabelX2.Content = nameX2 + " = " + Math.Round(method.answerX2, 3);
-                TableXYZ.ItemsSource = method.InitialDataList;
-                SpinOX.IsEnabled = true;
-                SpinOY.IsEnabled = true;
-                SpinOX.Value = 20;
-                SpinOY.Value = 30;
-                NumGenLable.Content = method.NumberGenerations;
+             
+              
                 if (MinMaxBox.SelectedIndex == 0)
                 {
                     double aRes = Convert.ToDouble(method.answer);
                     AnswerLabelF.Content = "F = " + (-aRes).ToString();
-
-                    for (int i = 0; i < method.InitialDataList.Count; i++)
-                    {
-                        double tmp = Convert.ToDouble(method.InitialDataList[i].result);
-                        method.InitialDataList[i].result = (-tmp).ToString();
-                    }
                 }
                 else
                 {
                     AnswerLabelF.Content = "F = " + method.answer;
                 }
+                method = new BruteForceMethod(minX1, minX2, maxX1, maxX2, X1X2, 0.1, SymbolBox.SelectedIndex);
+                for (int i = 0; i < method.InitialDataList.Count; i++)
+                {
+                    double tmp = Convert.ToDouble(method.InitialDataList[i].result);
+                    method.InitialDataList[i].result = (-tmp).ToString();
+                }
+                TableXYZ.ItemsSource = method.InitialDataList;
+                SpinOX.IsEnabled = true;
+                SpinOY.IsEnabled = true;
+                SpinOX.Value = 20;
+                SpinOY.Value = 30;
                 CreateChart(method.InitialDataList, chartViewer, (int)SpinOX.Value, (int)SpinOY.Value);
             }
             catch (Exception ex)

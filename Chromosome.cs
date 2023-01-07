@@ -61,6 +61,7 @@ namespace ParseFormuls
             {
                 double tmp = rnd.Next(maxX1);
                 _geneX1 = (_geneX1 + tmp) / 2;
+                tmp = rnd.Next(maxX2);
                 _geneX2 = (_geneX1 + tmp) / 2;
             } while (!(minX1 < _geneX1) && !(_geneX1 > maxX1) && !(minX2 < _geneX2) && !(_geneX2 > maxX2));
 
@@ -74,24 +75,17 @@ namespace ParseFormuls
         /// <returns></returns>
         public Chromosome[] Сrossover(Chromosome сrossover)
         {
-            int position = rnd.Next(100);
             double fX1 = _geneX1; // Ген х1 папы
             double fX2 = _geneX2; // Ген х2 папы
 
             double mX1 = сrossover._geneX1; // Ген х1 мамы
             double mX2 = сrossover._geneX2; // Ген х2 мамы
-            double c1X1 = 0;
-            double c1X2 = 0;
 
-            double c2X1 = 0;
-            double c2X2 = 0;
+            double c1X1 = fX1;
+            double c1X2 = mX2;
 
-            c1X1 = fX1;
-            c1X2 = mX2;
-
-            c2X1 = mX1;
-            c2X2 = fX2;
-
+            double c2X1 = mX1;
+            double c2X2 = fX2;
 
             return new Chromosome[] {
                 new Chromosome(c1X1, c1X2),
